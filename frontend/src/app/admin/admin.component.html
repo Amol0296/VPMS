@@ -1,0 +1,244 @@
+<mat-tab-group>
+    <mat-tab label="Vehicle List">
+        <div>
+            <div class="content">
+                <h2>Dashboard</h2>
+                <button *ngIf="!addVehicle" mat-raised-button color="primary" class="custom-btn" (click)="showVehicleForm()">Add
+                    Vehicle</button>
+            </div>
+            <div *ngIf="!addVehicle" class="display-content">
+                <div class="vehicle-list-view" >
+                    <div fxLayout="row wrap" fxLayoutGap="16px grid">
+                        <div fxFlex=25%  fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let vehicle of vehicleData">
+                            <mat-card class="mat-elevation-z4">
+                                <mat-card-title>Vehicle Number: {{vehicle.vehicle_number}}</mat-card-title>
+                                <mat-card-subtitle>
+                                    <label>Parking Lot Number:</label>
+                                    {{vehicle.parking_lot_number}}
+                                </mat-card-subtitle>
+                                <mat-card-subtitle>
+                                    <label>Status:</label>
+                                    {{vehicle.status}}
+                                </mat-card-subtitle>
+                                <mat-card-subtitle>
+                                    <label>Type:</label>
+                                    {{vehicle.type}}
+                                </mat-card-subtitle>
+                                <mat-card-subtitle>
+                                    <label>Charge: </label>
+                                    <span *ngIf="!isEdit">{{vehicle.charges}}</span>
+                                    <input *ngIf="isEdit && vehicle.isUpdated" placeholder="Charges" [(ngModel)]="newCharges" />
+                                </mat-card-subtitle>
+                                <mat-card-subtitle>
+                                    <label>Remark: </label>
+                                    <span *ngIf="!isEdit">{{vehicle.remark}}</span>
+                                    <input *ngIf="isEdit && vehicle.isUpdated" placeholder="Remark" [(ngModel)]="adminRemark" />
+                                </mat-card-subtitle>
+                                <mat-card-subtitle *ngIf="vehicle.status==='Out'">
+                                    <label>Out Time: </label>
+                                    <span>{{vehicle.out_time_display}}</span>
+                                </mat-card-subtitle>
+                                <mat-card-actions>
+                                    <button *ngIf="!isEdit && !vehicle.isUpdated && (vehicle.status === 'In' )" mat-raised-button
+                                    color="warn" (click)="openDialog(vehicle)">Out</button>
+                                <button *ngIf="isEdit && vehicle.isUpdated" mat-raised-button color="primary"
+                                    (click)="updateRecord(vehicle)">update</button>
+                                <button *ngIf="isEdit && vehicle.isUpdated" mat-raised-button color="secondary" class="button"
+                                    (click)="cancelEdit(vehicle)">Cancel</button>
+                                </mat-card-actions>
+                              
+            
+                            </mat-card>
+                            
+                        </div>
+    
+                    </div>
+                </div>            
+            </div>
+        </div>
+        <div *ngIf="addVehicle">
+            <form [formGroup]="addVehicleForm" class="custom-form" (ngSubmit)="onSubmit()">
+                <div class="input">
+                    <label> Vehicle Number </label>
+                    <span>
+                        <input type="text" formControlName="vehicle_number">
+                    </span>
+
+                </div>
+                <div class="input">
+                    <label> Parking Lot Number </label>
+                    <input type="text" formControlName="parking_lot_number">
+                </div>
+                <div class="input">
+                    <label> Vehicle Type </label>
+                    <!-- <input type="text" formControlName="type"> -->
+                    <mat-select [(ngModel)]="selectedVehicleCategory" formControlName="type">
+                        <mat-option *ngFor="let item of vehicleCategory" [value]="item.vehicle_category">
+                            {{item.vehicle_category}}
+                        </mat-option>
+
+                    </mat-select>
+                </div>
+                <!-- <div class="input">
+                    <label > Status </label>
+                    <input type="text" formControlName="status">
+                </div> -->
+                <div class="input">
+                    <label> Charges </label>
+                    <input type="text" formControlName="charges">
+                </div>
+                <button mat-raised-button color="primary" class="button" type="submit">Submit</button>
+                <button mat-raised-button color="secondary" class="button" (click)="cancel()">Cancel</button>
+            </form>
+        </div>
+    </mat-tab>
+    <mat-tab label="Vehicle Category">
+        <div class="content">
+            <h2>Add Vehicle Category</h2>
+            <form [formGroup]="vehicleCategoryForm" (ngSubmit)="onCategorySubmit()">
+                <div class="input">
+                    <label> Vehicle Type </label>
+                    <span>
+                        <input type="text" formControlName="vehicle_category_type">
+                    </span>
+                    <button mat-raised-button color="primary" class="btn-submit" type="submit">Submit</button>
+    
+                </div>
+    
+            </form>
+        </div>
+        
+        <div class="vehicle-list-view ">
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+                <div fxFlex=25%  fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let category of vehicleCategory">
+                    <mat-card class="userView"> 
+                        <mat-card-subtitle>
+                            Vehicle Type
+                        </mat-card-subtitle>
+                        <mat-card-content>
+                            Name : {{category.vehicle_category}}
+                        </mat-card-content>
+                    </mat-card>
+        
+                </div>
+            </div>
+        </div>
+        
+    </mat-tab>
+    <mat-tab label="Search">
+        <div class="content">
+            <h2>Search the vehicle by parking lot number</h2>
+        <form [formGroup]="vehicleSearchForm" (ngSubmit)="onSearchSubmit()">
+            <div class="input">
+                <label> Parking lot number </label>
+                <span>
+                    <input type="text" formControlName="parking_lot_number">
+                </span>
+                <button mat-raised-button color="primary" class="btn-submit" type="submit">Submit</button>
+            </div>
+        </form>
+        </div>
+        <div class="vehicle-list-view">
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+                <div fxFlex=25%  fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let vehicle of vehicleEntry">
+                    <mat-card>
+                        <mat-card-title>Vehicle Number:{{vehicle.vehicle_number}}</mat-card-title>
+                        <mat-card-subtitle>
+                            <label>Parking Lot Number:</label>
+                            {{vehicle.parking_lot_number}}
+                        </mat-card-subtitle>
+                        <mat-card-subtitle>
+                            <label>Status:</label>
+                            {{vehicle.status}}
+                        </mat-card-subtitle>
+                        <mat-card-subtitle>
+                            <label>Type:</label>
+                            {{vehicle.type}}
+                        </mat-card-subtitle>
+                        <mat-card-subtitle>
+                            <label>Charge: </label>
+                            <span *ngIf="!isEdit">{{vehicle.charges}}</span>
+                            <input *ngIf="isEdit && vehicle.isUpdated" placeholder="Charges" [(ngModel)]="newCharges" />
+                        </mat-card-subtitle>
+                        <mat-card-subtitle>
+                            <label>Remark</label>
+                            <span *ngIf="!isEdit">{{vehicle.remark}}</span>
+                            <input *ngIf="isEdit && vehicle.isUpdated" placeholder="Remark" [(ngModel)]="adminRemark" />
+                        </mat-card-subtitle>
+                    </mat-card>
+                </div>
+            </div>
+        </div>
+        
+    </mat-tab>
+    <mat-tab label="Report">
+        <div class="content">
+            <h2>Generate the vehicles entry report</h2>
+        <mat-form-field appearance="fill">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker" [formGroup]="range">
+                <input matStartDate placeholder="Start date" formControlName="start">
+                <input matEndDate placeholder="End date" formControlName="end">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+        <button mat-raised-button color="primary" class="btn-submit" (click)="downloadReport()">Download Report</button>
+        </div>
+        
+    </mat-tab>
+    <mat-tab label="Users" (click)="getAllUsers()">
+        <div class="content">
+            <h2>Add/Update Users</h2>
+        <button *ngIf="!updateUser" mat-raised-button color="primary" class="custom-btn" (click)="addUser=true;updateUser=false"> Add
+            User</button>
+        </div>
+        
+        <form *ngIf="addUser" [formGroup]="addUserForm" (ngSubmit)="onUserFormSubmit()">
+            <div class="input">
+                <label> User Name: </label>
+                <span>
+                    <input type="text" formControlName="username">
+                </span>
+            </div>
+            <div class="input">
+                <label> Email </label>
+                <span>
+                    <input type="text" formControlName="email">
+                </span>
+            </div>
+            <div class="input">
+                <label> Password </label>
+                <span>
+                    <input type="text" formControlName="password">
+                </span>
+            </div>
+            <button *ngIf="!updateUser" mat-raised-button color="primary" class="button" type="submit">Submit</button>
+            <button *ngIf="updateUser" mat-raised-button color="primary" class="button"
+                (click)="updateUserData()">Update</button>
+            <button *ngIf="addUser" mat-raised-button color="secondary" class="button"
+                (click)="addUser=false">Cancel</button>
+
+        </form>
+        <div class="vehicle-list-view">
+            <div fxLayout="row wrap" fxLayoutGap="16px grid">
+                <div fxFlex=25%  fxFlex.xs="100%" fxFlex.sm="33%" *ngFor="let user of usersData">
+                    <mat-card class="userView">
+                        <mat-card-title>
+                            Name: {{user.name}}
+                            
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            Email: {{user.email}}
+                        </mat-card-subtitle>
+                        <mat-card-actions>
+                            <button mat-button color="#000002" (click)="getSelectedUser(user)">Update</button>
+                        </mat-card-actions>
+                    </mat-card>
+        
+                </div>
+            </div>
+        </div>
+        
+    </mat-tab>
+</mat-tab-group>
