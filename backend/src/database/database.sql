@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS vehicle
     type character varying(100),
     status character varying(100),
     charges int,
+    in_time character varying(100),
+    out_time character varying(100),
+    remark character varying(250),
     CONSTRAINT vehicle_pkey PRIMARY KEY (vehicle_id)
 );
 
