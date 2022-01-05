@@ -20,6 +20,10 @@ To start angular application run following command in frontend folder
 Database schema folder:
 > backend/src/database/database.sql
 
+Setup configuration of database:
+- Modify the configuration of database in following file
+> backend/src/dabase/db.js
+
 View Application
 open following url to view the application
 > http://localhost:4200
