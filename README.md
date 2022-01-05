@@ -1,6 +1,11 @@
 # Vehicle Parking Management System
 
-to run the application use following step:
+Requirements:
+- Nodejs (latest version)
+- Postgres SQL
+- Angular (latest version)
+
+To run the application use following step:
 
 - Clone the repository
 - run the following commands to install all the dependacies in frontend and backend folder
